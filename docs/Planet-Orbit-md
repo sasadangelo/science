@@ -1,0 +1,49 @@
+
+# 🌍 Simulation: Earth-Sun Elliptical Orbit
+
+This simulation shows a planet (Earth) orbiting around a star (Sun) following an elliptical trajectory caused by gravitational attraction.
+
+## ⚙️ Physics Principles
+
+The simulation is based on **Newton's Second Law** and **Universal Gravitation**:
+
+- Gravitational force:
+  \[
+  \vec{F} = -G \cdot \frac{M \cdot m}{r^2} \cdot \hat{r}
+  \]
+
+- Acceleration derived from Newton’s law:
+  \[
+  \vec{a} = -G \cdot \frac{M}{r^3} \cdot \vec{r}
+  \]
+
+Where:
+- \( G \) is the gravitational constant (simplified here as 2.0 for visualization purposes)
+- \( M \) is the mass of the Sun
+- \( m \) is the mass of the Earth
+- \( \vec{r} \) is the vector from the Sun to the planet
+
+## 🧑‍💻 Code Overview
+
+The code is written in **Object-Oriented JavaScript**:
+
+- `Universe`: Holds the gravitational constant and shared properties
+- `Sun`: Represents the central star
+- `Planet`: Represents the orbiting planet with position and velocity
+- `Simulation`: Updates positions and velocities step-by-step
+- `Renderer`: Handles drawing on the HTML5 canvas and animating the orbit
+
+## ▶️ How to Run the Simulation
+
+1. Make sure [Node.js](https://nodejs.org) is installed
+
+2. From the root folder of the project, start a local HTTP server:
+
+   ```bash
+   npx http-server .
+   ```
+3. Open your browser and visit:
+
+   ```bash
+   http://localhost:8080/orbit.html
+   ```
