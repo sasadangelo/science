@@ -1,3 +1,8 @@
+
+// Constants
+const DISTANCE_SCALE_FACTOR = 5.0; // Scale factor for distances
+const EARTH_DISTANCE_SUN = 1.0 * DISTANCE_SCALE_FACTOR; // 1 AU (Astronomical Unit) = average distance from Earth to Sun
+
 class Universe {
     constructor(G = 2.0) {
         this.G = G;
@@ -124,7 +129,7 @@ class Renderer {
 // === Setup Universe ===
 const universe = new Universe(2.0);
 const sun = new Sun(universe, 15.0);
-const planet = new Planet(sun, 1.0, 5.0, 0.6);
+const planet = new Planet(sun, 1.0, EARTH_DISTANCE_SUN, 0.6);
 const sim = new Simulation([planet]);
 const canvas = document.getElementById('orbitCanvas');
 const renderer = new Renderer(sim, canvas);
