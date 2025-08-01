@@ -14,7 +14,11 @@ const DISTANCE_SCALE_FACTOR = 5.0;  // Scale factor for astronomical units
 const EARTH_DISTANCE_SUN = 1.0 * DISTANCE_SCALE_FACTOR;  // 1 AU scaled
 const a = EARTH_DISTANCE_SUN;       // Semi-major axis (AU * scale)
 const initialDistance = a * (1 - EARTH_ECCENTRICITY); // Earth's perihelion distance
-
+const MASS_EARTH = 1;         // riferimento massa Terra
+const MASS_SUN = 333000 * MASS_EARTH;
+const SECONDS_PER_YEAR = 10;      // Durata reale in secondi di 1 anno simulato
+const STEPS_PER_YEAR = 80000;     // Numero di passi (step) per simulare 1 anno completo
+const TIME_STEP = SECONDS_PER_YEAR / STEPS_PER_YEAR;  // dt, durata temporale di un singolo step
 /**
  * Calculate the ratio between the real orbital speed (vis-viva) and the circular speed.
  * This gives us a speed factor to adjust the initial velocity for elliptical orbits.
@@ -91,9 +95,9 @@ class Planet {
  * Simulation class handles updating all bodies in the simulation.
  */
 class Simulation {
-    constructor(bodies, dt = 0.01) {
+    constructor(bodies) {
         this.bodies = bodies;
-        this.dt = dt;
+        this.dt = TIME_STEP;
     }
 
     update() {
@@ -173,8 +177,8 @@ class Renderer {
 
 // === Setup Universe ===
 const universe = new Universe(2.0);
-const sun = new Sun(universe, 15.0);
-const planet = new Planet(sun, 1.0, initialDistance, a, 90);
+const sun = new Sun(universe, MASS_SUN);
+const planet = new Planet(sun, MASS_EARTH, initialDistance, a, 90);
 const sim = new Simulation([planet]);
 const canvas = document.getElementById('orbitCanvas');
 const renderer = new Renderer(sim, canvas);
