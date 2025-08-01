@@ -1,7 +1,19 @@
 
 // Constants
+const EARTH_ECCENTRICITY = 0.0167;
 const DISTANCE_SCALE_FACTOR = 5.0; // Scale factor for distances
 const EARTH_DISTANCE_SUN = 1.0 * DISTANCE_SCALE_FACTOR; // 1 AU (Astronomical Unit) = average distance from Earth to Sun
+const a = EARTH_DISTANCE_SUN; // semiasse maggiore = 1 AU * scala
+
+const initialDistance = a * (1 - EARTH_ECCENTRICITY); // perielio Terra con eccentricità 0.0167
+
+// add this function sopra la classe Planet
+function calculateSpeedFactor(G, M_sun, r, a) {
+    const mu = G * M_sun;
+    const v = Math.sqrt(mu * (2 / r - 1 / a));  // velocità reale (vis-viva)
+    const v_c = Math.sqrt(mu / r);               // velocità circolare
+    return v / v_c;
+}
 
 class Universe {
     constructor(G = 2.0) {
@@ -18,11 +30,12 @@ class Sun {
 }
 
 class Planet {
-    constructor(sun, mass, distance, speedFactor = 1.0, angleDeg = 90) {
+    constructor(sun, mass, distance, a, angleDeg = 90) {
         this.sun = sun;
         this.mass = mass;
         this.position = { x: distance, y: 0 };
         const G = sun.universe.G;
+        const speedFactor = calculateSpeedFactor(G, sun.mass, distance, a);
         const vCircular = Math.sqrt(G * sun.mass / distance);
         const initialSpeed = vCircular * speedFactor;
         const angleRad = angleDeg * Math.PI / 180;
@@ -31,6 +44,7 @@ class Planet {
             y: initialSpeed * Math.sin(angleRad),
         };
     }
+
 
     update(dt) {
         const dx = this.position.x - this.sun.position.x;
@@ -129,7 +143,7 @@ class Renderer {
 // === Setup Universe ===
 const universe = new Universe(2.0);
 const sun = new Sun(universe, 15.0);
-const planet = new Planet(sun, 1.0, EARTH_DISTANCE_SUN, 0.6);
+const planet = new Planet(sun, 1.0, initialDistance, a, 90);
 const sim = new Simulation([planet]);
 const canvas = document.getElementById('orbitCanvas');
 const renderer = new Renderer(sim, canvas);
