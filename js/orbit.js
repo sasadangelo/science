@@ -1,34 +1,56 @@
+/*!
+ * Orbit Simulation - Gravitational 2-body system
+ *
+ * Copyright (c) 2025 Salvatore D'Angelo
+ * MIT License
+ *
+ * This simulation models the motion of a planet around a sun using Newtonian gravity.
+ * Distances are scaled to fit the visualization. Masses are added for both bodies.
+ */
 
-// Constants
-const EARTH_ECCENTRICITY = 0.0167;
-const DISTANCE_SCALE_FACTOR = 5.0; // Scale factor for distances
-const EARTH_DISTANCE_SUN = 1.0 * DISTANCE_SCALE_FACTOR; // 1 AU (Astronomical Unit) = average distance from Earth to Sun
-const a = EARTH_DISTANCE_SUN; // semiasse maggiore = 1 AU * scala
+// === Constants ===
+const EARTH_ECCENTRICITY = 0.0167;  // Orbital eccentricity of Earth
+const DISTANCE_SCALE_FACTOR = 5.0;  // Scale factor for astronomical units
+const EARTH_DISTANCE_SUN = 1.0 * DISTANCE_SCALE_FACTOR;  // 1 AU scaled
+const a = EARTH_DISTANCE_SUN;       // Semi-major axis (AU * scale)
+const initialDistance = a * (1 - EARTH_ECCENTRICITY); // Earth's perihelion distance
 
-const initialDistance = a * (1 - EARTH_ECCENTRICITY); // perielio Terra con eccentricità 0.0167
-
-// add this function sopra la classe Planet
+/**
+ * Calculate the ratio between the real orbital speed (vis-viva) and the circular speed.
+ * This gives us a speed factor to adjust the initial velocity for elliptical orbits.
+ */
 function calculateSpeedFactor(G, M_sun, r, a) {
     const mu = G * M_sun;
-    const v = Math.sqrt(mu * (2 / r - 1 / a));  // velocità reale (vis-viva)
-    const v_c = Math.sqrt(mu / r);               // velocità circolare
+    const v = Math.sqrt(mu * (2 / r - 1 / a));  // Vis-viva equation
+    const v_c = Math.sqrt(mu / r);              // Circular velocity
     return v / v_c;
 }
 
+// === Classes ===
+
+/**
+ * Universe class defines global physical constants (like gravitational constant).
+ */
 class Universe {
     constructor(G = 2.0) {
         this.G = G;
     }
 }
-
+/**
+ * Sun class represents the central massive body.
+ */
 class Sun {
     constructor(universe, mass) {
         this.universe = universe;
-        this.mass = mass;
-        this.position = { x: 0, y: 0 };
+        this.mass = mass;  // Mass in simulation units
+        this.position = { x: 0, y: 0 };  // Origin of the coordinate system
     }
 }
 
+/**
+ * Planet class represents a body orbiting the Sun.
+ * The speed is calculated based on vis-viva equation.
+ */
 class Planet {
     constructor(sun, mass, distance, a, angleDeg = 90) {
         this.sun = sun;
@@ -45,7 +67,9 @@ class Planet {
         };
     }
 
-
+    /**
+     * Update planet's position using Newtonian gravity and basic Euler integration.
+     */
     update(dt) {
         const dx = this.position.x - this.sun.position.x;
         const dy = this.position.y - this.sun.position.y;
@@ -63,6 +87,9 @@ class Planet {
     }
 }
 
+/**
+ * Simulation class handles updating all bodies in the simulation.
+ */
 class Simulation {
     constructor(bodies, dt = 0.01) {
         this.bodies = bodies;
@@ -76,6 +103,9 @@ class Simulation {
     }
 }
 
+/**
+ * Renderer class draws the Sun, Planet, and orbital path on a HTML canvas.
+ */
 class Renderer {
     constructor(sim, canvas) {
         this.sim = sim;
@@ -99,6 +129,7 @@ class Renderer {
         const ctx = this.ctx;
         const planet = this.sim.bodies[0];
 
+        // Clear canvas
         ctx.fillStyle = 'black';
         ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
@@ -108,7 +139,7 @@ class Renderer {
         ctx.arc(this.centerX, this.centerY, 10, 0, Math.PI * 2);
         ctx.fill();
 
-        // draw trajectory
+        // Track and draw trajectory
         this.trajectory.push({ x: planet.position.x, y: planet.position.y });
         ctx.strokeStyle = 'lightblue';
         ctx.beginPath();
