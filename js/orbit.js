@@ -19,6 +19,8 @@ const MASS_SUN = 333000 * MASS_EARTH;
 const SECONDS_PER_YEAR = 10;      // Durata reale in secondi di 1 anno simulato
 const STEPS_PER_YEAR = 80000;     // Numero di passi (step) per simulare 1 anno completo
 const TIME_STEP = SECONDS_PER_YEAR / STEPS_PER_YEAR;  // dt, durata temporale di un singolo step
+const G_SIMULATION = (4 * Math.PI * Math.PI) / MASS_SUN; // ≈ 0.0001186
+
 /**
  * Calculate the ratio between the real orbital speed (vis-viva) and the circular speed.
  * This gives us a speed factor to adjust the initial velocity for elliptical orbits.
@@ -36,7 +38,7 @@ function calculateSpeedFactor(G, M_sun, r, a) {
  * Universe class defines global physical constants (like gravitational constant).
  */
 class Universe {
-    constructor(G = 2.0) {
+    constructor(G = G_SIMULATION) {
         this.G = G;
     }
 }
@@ -176,7 +178,7 @@ class Renderer {
 }
 
 // === Setup Universe ===
-const universe = new Universe(2.0);
+const universe = new Universe(G_SIMULATION);
 const sun = new Sun(universe, MASS_SUN);
 const planet = new Planet(sun, MASS_EARTH, initialDistance, a, 90);
 const sim = new Simulation([planet]);
